@@ -8,7 +8,9 @@ exports.run = (message) => {
             return true
         case "add":
             if (!message[1] || !message[2]) return false
-            if (message[3]) GNT.AddPlayer(message[1], message[2], message[3])
-            else GNT.AddPlayer(message[1], message[2])
+            if (!message[3]) GNT.AddPlayer(message[1], message[2])
+            else GNT.AddPlayer(message[1], message[2], message[3])
+
+            
     }
 }

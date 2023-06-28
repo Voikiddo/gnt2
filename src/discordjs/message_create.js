@@ -24,8 +24,7 @@ exports.OnMessageCreate = async (message, client) => {
         if (!message.member.roles.cache.some(e=>e.id==='1104334111633584128')) return false // check if is admin
         
     }
-    if (!fullMessage.startsWith(GNT_SYMBOL)) return false;
-
-    let command = fullMessage.slice(1).split(" ")
-    if (command[0] === "start") GNT.ResetGame()
+    if (!fullMessage.startsWith(GNT_SYMBOL)) return false
+    
+    return true
 }

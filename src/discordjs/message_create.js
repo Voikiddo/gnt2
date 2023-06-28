@@ -1,6 +1,10 @@
-const BOT_SYMBOL = "?"
+const GNT = require("../gnt/gnt")
+const ADMIN_QOL = require("../gnt/admin_qol")
 
-exports.OnMessageCreate = async (message) => {
+const GNT_SYMBOL = "?"
+const ADMIN_SYMBOL = "!"
+
+exports.OnMessageCreate = async (message, client) => {
     if (message.author.bot) return false;
 
     let fullMessage
@@ -16,5 +20,12 @@ exports.OnMessageCreate = async (message) => {
         fullMessage = message.content.toLowerCase();
     }
 
-    if (!fullMessage.startsWith(BOT_SYMBOL)) return false;
+    if (fullMessage.startsWith(ADMIN_SYMBOL)) {
+        if (!message.member.roles.cache.some(e=>e.id==='1104334111633584128')) return false // check if is admin
+        
+    }
+    if (!fullMessage.startsWith(GNT_SYMBOL)) return false;
+
+    let command = fullMessage.slice(1).split(" ")
+    if (command[0] === "start") GNT.ResetGame()
 }

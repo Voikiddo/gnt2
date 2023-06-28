@@ -2,13 +2,19 @@
 // I don't care enough to do sqlite but I probably should monkS
 // and probably should do ts as well but I also don't care enough
 let PlayerData = []
-// let DefaultPlayer = {
+// DefaultPlayer
+// {
 //     "nickname": "",
 //     "id": "",
 //     "health": 5,
 //     "score": 0,
 //     "frozen": false
 // }
+let GameState = {
+    "AllowEntry": true,
+    "SuddenDeath": false
+}
+exports.State = GameState
 
 exports.getPlayerByID = (id) => {
     return PlayerData.find(player => player.id === id)
@@ -30,18 +36,19 @@ exports.getData = (query="") => {
     }
 }
 
-exports.EntryClosed = false
-
 // register a player to the game
-exports.RegisterNewPlayer = (nickname, id, team, health=5, score=0) => {
-    const Teams = ["Red", "Orange", "Amber", "Olive", "Aqua", "Teal", "Violet", "Pink"]
-
+exports.RegisterNewPlayer = (nickname, team, id=undefined, health=5, score=0) => {
     // if admin closed the game registering
     if (this.EntryClosed) return false
 
     // if the player already exists
-    for (let player of PlayerData) {
-        if (player.id === id) return false
+    if (id === undefined) {
+        id = PlayerData.length
+    }
+    else {
+        for (let player of PlayerData) {
+            if (player.id === id) return false
+        }
     }
 
     // add player to the data
@@ -62,5 +69,5 @@ exports.RegisterNewPlayer = (nickname, id, team, health=5, score=0) => {
         return (aIndex - bIndex)
     })
 
-    return true
+    return id
 }

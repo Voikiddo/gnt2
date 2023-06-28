@@ -18,7 +18,7 @@ exports.StartClient = () => {
         console.log(`Ready! Logged in as ${c.user.tag}`);
     });
 
-    client.on(Events.MessageCreate, OnMessageCreate)
+    client.on(Events.MessageCreate, (message)=>OnMessageCreate(message, client))
     
     client.login(process.env.TOKEN);
 }

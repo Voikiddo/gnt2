@@ -1,5 +1,5 @@
-const { StartServer } = require("./server/server.js")
-const { StartClient } = require("./discordjs/discordClient.js")
+import { StartServer } from "./server/server.js"
+import { StartClient } from "./discordjs/discordClient.js"
 
 // start the server to scam the server and also does things
 StartServer()

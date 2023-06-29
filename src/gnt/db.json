@@ -1,0 +1,36 @@
+{
+  "PlayerData": [
+    {
+      "nickname": "voik1",
+      "id": "1",
+      "team": "Violet",
+      "health": 5,
+      "score": 0,
+      "frozen": false
+    },
+    {
+      "nickname": "voik2",
+      "id": "2",
+      "team": "Violet",
+      "health": 5,
+      "score": 0,
+      "frozen": false
+    },
+    {
+      "nickname": "not-voik",
+      "id": "3",
+      "team": "Eternal",
+      "health": 4,
+      "score": 0,
+      "frozen": false
+    }
+  ],
+  "Teams": [
+    "Violet",
+    "Eternal"
+  ],
+  "GameState": {
+    "AllowEntry": true,
+    "SuddenDeath": false
+  }
+}

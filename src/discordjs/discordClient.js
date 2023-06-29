@@ -1,8 +1,8 @@
-const { Client, Collection, Events, GatewayIntentBits, Partials, EmbedBuilder  } = require('discord.js');
-const { OnMessageCreate } = require('./message_create.js')
-require("dotenv").config()
+import "dotenv/config.js";
+import { Client, Collection, Events, GatewayIntentBits, Partials, EmbedBuilder } from 'discord.js';
+import { OnMessageCreate } from './message_create.js';
 
-exports.StartClient = () => {
+export function StartClient() {
     const client = new Client({
         intents: [
             GatewayIntentBits.Guilds, 

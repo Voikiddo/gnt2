@@ -1,101 +1,98 @@
-const Game = require("./data.js")
+import { getPlayerByID, getGameState, updatePlayer, updateGameState, RegisterNewPlayer } from "./data.js"
 
 // health
 
-exports.AddHealth = (id, health_add) => {
-    let player = Game.getPlayerByID(id)
+export function AddHealth(id, health_add) {
+    let player = getPlayerByID(id)
     player.health = player.health + health_add
+    updatePlayer(player)
 }
 
-exports.RemoveHealth = (id, health_remove) => {
-    let player = Game.getPlayerByID(id)
+export function RemoveHealth(id, health_remove) {
+    let player = getPlayerByID(id)
     player.health = player.health - health_remove
+    updatePlayer(player)
 }
 
-exports.SetHealth = (id, newHealth) => {
-    let player = Game.getPlayerByID(id)
+export function SetHealth(id, newHealth) {
+    let player = getPlayerByID(id)
     player.health = newHealth
+    updatePlayer(player)
 }
 
 // frozen states
 
-exports.Freeze = (id) => {
-    let player = Game.getPlayerByID(id)
+export function Freeze(id) {
+    let player = getPlayerByID(id)
     player.frozen = true
+    updatePlayer(player)
 }
 
-exports.Defreeze = (id) => {
-    let player = Game.getPlayerByID(id)
+export function Defreeze(id) {
+    let player = getPlayerByID(id)
     player.frozen = false
+    updatePlayer(player)
 }
 
-exports.SetFrozenState = (id, newFrozenState) => {
-    let player = Game.getPlayerByID(id)
+export function SetFrozenState(id, newFrozenState) {
+    let player = getPlayerByID(id)
     player.frozen = newFrozenState
+    updatePlayer(player)
 }
 
 // score
 
-exports.AddScore = (id, added) => {
-    let player = Game.getPlayerByID(id)
+export function AddScore(id, added) {
+    let player = getPlayerByID(id)
     player.score = player.score + added
+    updatePlayer(player)
 }
 
-exports.RemoveScore = (id, removed) => {
-    let player = Game.getPlayerByID(id)
+export function RemoveScore(id, removed) {
+    let player = getPlayerByID(id)
     player.score = player.score - removed
+    updatePlayer(player)
 }
 
-exports.SetScore = (id, newScore) => {
-    let player = Game.getPlayerByID(id)
+export function SetScore(id, newScore) {
+    let player = getPlayerByID(id)
     player.score = newScore
-}
-
-// useful when a player is dead
-exports.GiveActivePlayerScore = (added) => {
-    for (let player of Game) {
-        if (player.health > 0 && !player.frozen) {
-            player.health += added
-        }
-    }
+    updatePlayer(player)
 }
 
 // misc
 
-exports.CloseEntry = () => Game.State.AllowEntry = false
-exports.OpenEntry = () => Game.State.AllowEntry = true
+export function CloseEntry() {
+    let state = getGameState
+    state.AllowEntry = false
+    updateGameState(state)
+}
+export function OpenEntry() {
+    let state = getGameState
+    state.AllowEntry = true
+    updateGameState(state)
+}
 
 // set player nickname, could be useful if they have weird nickname
-exports.SetNickname = (id, newName) => {
-    let player = Game.getPlayerByID(id)
+export function SetNickname(id, newName) {
+    let player = getPlayerByID(id)
     player.nickname = newName
+    updatePlayer(player)
 }
 
 // set player team, totally no use unless there's bugs or mistakes
-exports.SetTeam = (id, newTeam) => {
-    let player = Game.getPlayerByID(id)
+export function SetTeam(id, newTeam) {
+    let player = getPlayerByID(id)
     player.team = newTeam
-}
-
-// set player id, totally no use unless there's bugs
-exports.SetID = (id, newID) => {
-    let player = Game.getPlayerByID(id)
-    player.id = newID
-}
-
-// reassign both health and score to another person
-exports.ReassignData = (id, newID, newName) => {
-    let player = Game.getPlayerByID(id)
-    player.id = newID
-    player.nickname = newName
+    updatePlayer(player)
 }
 
 // move health to another person (replace their original health) without removing original player's score
-exports.InheritHealth = (id, newID, newName) => {
-    let originalPlayer = Game.getPlayerByID(id)
-    let newPlayer = Game.getPlayerByID(newID)
+export function InheritHealth(id, newID, newName) {
+    let originalPlayer = getPlayerByID(id)
+    let newPlayer = getPlayerByID(newID)
 
-    if (newPlayer === undefined) Game.RegisterNewPlayer(newName, newID, originalPlayer.team, originalPlayer.health, 0)
+    if (newPlayer === undefined) RegisterNewPlayer(newName, newID, originalPlayer.team, originalPlayer.health, 0)
     else newPlayer.health = originalPlayer.health
 
     originalPlayer.health = 0

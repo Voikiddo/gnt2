@@ -1,23 +1,23 @@
 // server stuff, to scam the container
-const express = require("express");
-const path = require('path')
-const { log } = require('node:console');
-const PlayerData = require("../gnt/data.js")
+import express from "express";
+import path from 'path';
+import { log } from 'node:console';
+import { getData } from "../gnt/data.js";
 const app = express();
 const port = 8080;
 
-exports.StartServer = () => {
+export function StartServer() {
     app.get("/", function (req, res) {
         res.redirect('https://give-and-take-v2.glitch.me/')
     });
     
     app.get("/data/", function (req, res) {
-        res.json(PlayerData.getData("all"));
+        res.json(getData("all"));
     });
     
     app.get("/data/:query/", function (req, res) {
         const query = req.params.query
-        const result = PlayerData.getData(query)
+        const result = getData(query)
         if (!result) res.status(400).json({ message: `Query invalid: acceptable queries are "all", "alive", "dead", and playerID, get ${query} instead` })
         res.json(result)
     });

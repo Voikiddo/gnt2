@@ -1,10 +1,10 @@
-const GNT = require("../gnt/gnt")
-const ADMIN_QOL = require("../gnt/admin_qol")
+// import GNT from "../gnt/gnt.js"
+// import ADMIN_QOL from "../gnt/admin_qol.js"
 
 const GNT_SYMBOL = "?"
 const ADMIN_SYMBOL = "!"
 
-exports.OnMessageCreate = async (message, client) => {
+export async function OnMessageCreate(message, client) {
     if (message.author.bot) return false;
 
     let fullMessage

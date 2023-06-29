@@ -1,35 +1,29 @@
-const Game = require("./data.js")
+import { resetDB, getPlayerByID, getGameState, updatePlayer, updateGameState, RegisterNewPlayer } from "./data.js"
 
 // reset whole game
-exports.ResetGame = (playerData=undefined) => {
-    if (playerData) Game = playerData
-    else Game = []
-
-    Game.State.AllowEntry = true
-
-    console.log("Game reset.")
+export function ResetGame(playerData=undefined) {
+    resetDB(playerData)
+    console.log("Game reset:", (new Date()).toLocaleString())
 }
 
 // player jump in the game
-exports.AddPlayer = (playerName, team, health=5) => {
-    const Teams = ["Red", "Orange", "Amber", "Olive", "Aqua", "Teal", "Violet", "Pink"]
-    if (!Teams.includes(team)) team = "???"
-
-    const id =  Game.RegisterNewPlayer(playerName, team, health=health)
+export function AddPlayer(playerName, id, team="???", health=5) {
+    RegisterNewPlayer(playerName, team, id, health=health)
     return id
 }
 
 // doesn't consider cooldown but consider frozen state
 // return whether it's a kill or not
 // TODO: error handling (putting it here for now)
-exports.GNT = (attackerID, ID1, ID2) => {
-    let attacker = Game.getPlayerByID(attackerID)
-    let player1 = Game.getPlayerByID(ID1)
-    let player2 = Game.getPlayerByID(ID2)
+export function GNT(attackerID, ID1, ID2) {
+    let attacker = getPlayerByID(attackerID)
+    let player1 = getPlayerByID(ID1)
+    let player2 = getPlayerByID(ID2)
 
     // if the attacker is frozen
     if (attacker.frozen) {
         attacker.frozen = false
+        updatePlayer(attacker)
         throw new Error("Attacker frozen")
     }
 
@@ -45,8 +39,11 @@ exports.GNT = (attackerID, ID1, ID2) => {
         if (player1.frozen) throw new Error("Teammate frozen")
         if (player2.frozen) throw new Error("Attacked player frozen")
 
-        if (!Game.State.SuddenDeath) player1.health++
+        if (!State.SuddenDeath) player1.health++
         player2.health--
+
+        updatePlayer(player1)
+        updatePlayer(player2)
 
         if (player2.health === 0) return true
         else return false
@@ -62,7 +59,10 @@ exports.GNT = (attackerID, ID1, ID2) => {
         if (player2.frozen) throw new Error("Teammate frozen")
 
         player1.health--
-        if (!Game.State.SuddenDeath) player2.health++
+        if (!State.SuddenDeath) player2.health++
+
+        updatePlayer(player1)
+        updatePlayer(player2)
 
         if (player1.health === 0) return true
         else return false
@@ -72,9 +72,12 @@ exports.GNT = (attackerID, ID1, ID2) => {
 }
 
 // sudden death
-exports.SuddenDeath = () => {
-    for (let player in Game) {
-        if (player.health > 1) player.health = 1
-    }
-    Game.State.SuddenDeath = true
+export function SuddenDeath() {
+    let data = getData("all")
+    data.PlayerData = data.PlayerData.map(p => {
+        if (p.health > 1) p.heath = 1
+        return p
+    })
+    data.GameState.SuddenDeath = true
+    updateData(data)
 }

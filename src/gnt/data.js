@@ -112,7 +112,7 @@ export function RegisterNewPlayer(nickname, team, id=undefined, health=5, score=
         "team": team,
         "health": health,
         "score": score,
-        "frozen": false
+        "lastGNT": new Date().getTime()
     })
 
     // sort

@@ -100,6 +100,11 @@ export function RegisterNewPlayer(nickname, team, id=undefined, health=5, score=
         if (player.id === id) return false
     }
 
+    // can't choose the same name
+    for (let player of PlayerData) {
+        if (player.nickname === nickname) return false
+    }
+
     // register new team if it doesn't exist
     if (!Teams.includes(team)) {
         Teams.push(team)

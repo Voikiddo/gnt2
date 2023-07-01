@@ -1,4 +1,24 @@
-import { getPlayerByID, getGameState, updatePlayer, updateGameState, RegisterNewPlayer } from "./data.js"
+import { getPlayerByID, getGameState, updatePlayer, updateGameState, RegisterNewPlayer, getData } from "./data.js"
+
+// find player
+
+export function FindIDByName(name) {
+    const PlayerDatas = getData("all")
+    for (let player of PlayerDatas) {
+        if (player.nickname === name) {
+            return player.id
+        }
+    }
+}
+
+export function FindPlayerByName(name) {
+    const PlayerDatas = getData("all")
+    for (let player of PlayerDatas) {
+        if (player.nickname === name) {
+            return player
+        }
+    }
+}
 
 // health
 
@@ -77,6 +97,7 @@ export function CloseEntry() {
     state.AllowEntry = false
     updateGameState(state)
 }
+
 export function OpenEntry() {
     let state = getGameState
     state.AllowEntry = true

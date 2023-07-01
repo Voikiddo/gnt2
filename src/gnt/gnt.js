@@ -1,4 +1,5 @@
 import { resetDB, getPlayerByID, getGameState, updatePlayer, updateGameState, RegisterNewPlayer } from "./data.js"
+import { IsFrozen } from "./util.js"
 
 // reset whole game
 export function ResetGame(playerData=undefined) {
@@ -8,8 +9,7 @@ export function ResetGame(playerData=undefined) {
 
 // player jump in the game
 export function AddPlayer(playerName, id, team="???", health=5) {
-    RegisterNewPlayer(playerName, team, id, health=health)
-    return id
+    return RegisterNewPlayer(playerName, team, id, health=health)
 }
 
 // doesn't consider cooldown but consider frozen state
@@ -21,8 +21,8 @@ export function GNT(attackerID, ID1, ID2) {
     let player2 = getPlayerByID(ID2)
 
     // if the attacker is frozen
-    if (attacker.frozen) {
-        attacker.frozen = false
+    if (IsFrozen(attacker)) {
+        attacker.lastGNT = new Date().getTime()
         updatePlayer(attacker)
         throw new Error("Attacker frozen")
     }
@@ -36,8 +36,8 @@ export function GNT(attackerID, ID1, ID2) {
         if (player1.heatlh <= 0) throw new Error("Teammate already dead")
         if (player2.health <= 0) throw new Error("Attacked player already dead")
 
-        if (player1.frozen) throw new Error("Teammate frozen")
-        if (player2.frozen) throw new Error("Attacked player frozen")
+        if (IsFrozen(player1)) throw new Error("Teammate frozen")
+        if (IsFrozen(player2)) throw new Error("Attacked player frozen")
 
         if (!State.SuddenDeath) player1.health++
         player2.health--
@@ -55,8 +55,8 @@ export function GNT(attackerID, ID1, ID2) {
         if (player1.health <= 0) throw new Error("Attacked player already dead")
         if (player2.heatlh <= 0) throw new Error("Teammate already dead")
 
-        if (player1.frozen) throw new Error("Attacked player frozen")
-        if (player2.frozen) throw new Error("Teammate frozen")
+        if (IsFrozen(player1)) throw new Error("Attacked player frozen")
+        if (IsFrozen(player2)) throw new Error("Teammate frozen")
 
         player1.health--
         if (!State.SuddenDeath) player2.health++

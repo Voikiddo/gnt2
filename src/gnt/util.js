@@ -59,7 +59,7 @@ export function Freeze(id) {
     updatePlayer(player)
 }
 
-export function Defreeze(id) {
+export function Unfreeze(id) {
     let player = getPlayerByID(id)
     player.lastGNT = Date.now()
     updatePlayer(player)
@@ -67,7 +67,7 @@ export function Defreeze(id) {
 
 export function SetFrozenState(id, newFrozenState) {
     if (newFrozenState) Freeze(id)
-    else Defreeze(id)
+    else Unfreeze(id)
 }
 
 // score

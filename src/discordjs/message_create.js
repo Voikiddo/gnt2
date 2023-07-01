@@ -5,8 +5,6 @@ const GNT_SYMBOL = "?"
 const ADMIN_SYMBOL = "!"
 
 export async function OnMessageCreate(message, client) {
-    if (message.author.bot) return false;
-
     let fullMessage
     if (message.partial) {
         await message.fetch()
@@ -19,6 +17,8 @@ export async function OnMessageCreate(message, client) {
     } else {
         fullMessage = message.content.toLowerCase();
     }
+
+    console.log(message.author);
 
     if (fullMessage.startsWith(ADMIN_SYMBOL)) {
         if (!message.member.roles.cache.some(e=>e.id==='1104334111633584128')) return false // check if is admin

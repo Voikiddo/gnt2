@@ -9,16 +9,16 @@ export function run(message) {
             GNT.ResetGame();
             return true
         case "heal":
-            if (!message[1] || !message[2] || !Number(message[2])) return false
+            if (!message[1] || !message[2] || !parseInt(message[2])) return false
             player = Utils.FindIDByName(message[1])
             if (!player) return false
-            Utils.AddHealth(player, Number(message[2]))
+            Utils.AddHealthByID(player, parseInt(message[2]))
             return true
         case "hurt":
             if (!message[1] || !message[2] || !Number(message[2])) return false
             player = Utils.FindIDByName(message[1])
             if (!player) return false
-            Utils.RemoveHealth(player, Number(message[2]))
+            Utils.RemoveHealthByID(player, Number(message[2]))
             return true
         case "close":
             Utils.CloseEntry()
@@ -53,6 +53,7 @@ export function run(message) {
             player = Utils.FindIDByName(message[1])
             if (!player) return false
             Utils.SetTeam(player, message[2])
+            return true
         default:
             return false
     }

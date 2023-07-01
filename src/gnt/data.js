@@ -31,34 +31,75 @@ export function getGameState() {
     return db.data.GameState
 }
 
-export function updatePlayer(newPlayerData) {
+export function updatePlayers(newPlayerData) {
     db.read()
-    const { PlayerData, Teams } = db.data
-    if (!player) return false
 
     let teamChanged = false
-    PlayerData = PlayerData.map(oldPlayerData => {
-        if (oldPlayerData.id === newPlayerData.id) {
-            teamChanged = oldPlayerData.team === newPlayerData.team
-            return newPlayerData
+    let playerUpdateCount = 0
+
+    db.data.PlayerData = db.data.PlayerData.map(oldPlayerData => {
+        for (let newPlayer of newPlayerData) {
+            if (oldPlayerData.id === newPlayer.id) {
+                teamChanged = oldPlayerData.team === newPlayerData.team
+                playerUpdated = true
+                return newPlayerData
+            }
         }
-        else {
-            return oldPlayerData
-        }
+        return oldPlayerData
     })
+
+    if (playerUpdateCount !== newPlayerData.length) {
+        throw new Error("Can't find the player to update!")
+    }
+
     if (teamChanged) {
-        if (!Teams.includes(newPlayerData.team)) Teams.push(newPlayerData.team)
+        const { Teams } = db.data
+        if (!Teams.includes(newPlayerData.team)) Teams.push(newPlayerData.team) // TODO
         
-        PlayerData.sort((a, b) => {
-            const aIndex = Teams.findIndex(a.team)
-            const bIndex = Teams.findIndex(b.team)
+        db.data.PlayerData.sort((a, b) => {
+            const aIndex = Teams.findIndex(t => t===a.team)
+            const bIndex = Teams.findIndex(t => t===b.team)
     
             return (aIndex - bIndex)
         })
     }
 
     db.write()
-    return newPlayerData
+}
+
+export function updatePlayer(newPlayerData) {
+    db.read()
+
+    const { Teams } = db.data
+    let teamChanged = false
+    let playerUpdated = false
+    db.data.PlayerData = db.data.PlayerData.map(oldPlayerData => {
+        if (oldPlayerData.id === newPlayerData.id) {
+            teamChanged = oldPlayerData.team === newPlayerData.team
+            if (!Teams.includes(newPlayer.team)) Teams.push(newPlayerData.team)
+
+            playerUpdated = true
+            return newPlayerData
+        }
+        else {
+            return oldPlayerData
+        }
+    })
+
+    if (!playerUpdated) {
+        throw new Error("Can't find the player to update!")
+    }
+
+    if (teamChanged) {
+        db.data.PlayerData.sort((a, b) => {
+            const aIndex = Teams.findIndex(t => t===a.team)
+            const bIndex = Teams.findIndex(t => t===b.team)
+    
+            return (aIndex - bIndex)
+        })
+    }
+
+    db.write()
 }
 
 export function updateGameState(newState) {
@@ -80,10 +121,10 @@ export function getData(query="") {
         return PlayerData
     }
     if (query === "alive") {
-        return PlayerData.map(player => player.health > 0)
+        return PlayerData.filter(player => player.health > 0)
     }
     if (query === "dead") {
-        return PlayerData.map(player => player.health <= 0)
+        return PlayerData.filter(player => player.health <= 0)
     }
     return getPlayerByID(id)
 }

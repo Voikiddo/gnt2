@@ -1,5 +1,5 @@
 import { resetDB, getPlayerByID, getGameState, updatePlayer, updateGameState, RegisterNewPlayer, getData } from "./data.js"
-import { IsFrozen } from "./util.js"
+import { IsFrozen, Unfreeze } from "./util.js"
 import { strikethrough, bold } from "discord.js"
 
 // reset whole game
@@ -20,11 +20,11 @@ export function GNT(attackerID, ID1, ID2) {
     let attacker = getPlayerByID(attackerID)
     let player1 = getPlayerByID(ID1)
     let player2 = getPlayerByID(ID2)
+    const State = getGameState()
 
     // if the attacker is frozen
     if (IsFrozen(attacker)) {
-        attacker.lastGNT = new Date().getTime()
-        updatePlayer(attacker)
+        Unfreeze(attacker)
         throw new Error("Attacker frozen")
     }
 
@@ -33,7 +33,7 @@ export function GNT(attackerID, ID1, ID2) {
 
     // player1: given
     // player2: taken
-    if (attacker.team === player1.team && attacker.team !== player2.team) {
+    if (attacker.team === player1.team && attacker.team !== player2.team || attacker.team === "???") {
         if (player1.heatlh <= 0) throw new Error("Teammate already dead")
         if (player2.health <= 0) throw new Error("Attacked player already dead")
 
@@ -52,7 +52,7 @@ export function GNT(attackerID, ID1, ID2) {
 
     // player1: taken
     // player2: given
-    if (attacker.team === player2.team && attacker.team !== player1.team) {
+    if (attacker.team === player2.team && attacker.team !== player1.team || attacker.team === "???") {
         if (player1.health <= 0) throw new Error("Attacked player already dead")
         if (player2.heatlh <= 0) throw new Error("Teammate already dead")
 
@@ -90,7 +90,7 @@ export function PrintGameStatus() {
 
     let output = "Game status:"
     let currentTeam = ""
-    for (let player in PlayerData) {
+    for (let player of PlayerData) {
         // if team changed then display team
         if (currentTeam !== player.team) {
             currentTeam = player.team
@@ -98,8 +98,8 @@ export function PrintGameStatus() {
         }
 
         const line = `${player.nickname} ${player.health}`
-        if (player.lastGNT > FrozenThreshold) output = output + line + "\n"
-        else output = output + strikethrough(line) + "\n"
+        if (IsFrozen(player)) output = output + strikethrough(line) + "\n"
+        else output = output + line + "\n"
     }
     return output
 } 

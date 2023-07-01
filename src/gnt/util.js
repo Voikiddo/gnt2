@@ -2,6 +2,16 @@ import { getPlayerByID, getGameState, updatePlayer, updateGameState, RegisterNew
 
 // find player
 
+export function HasPlayer(id) {
+    const PlayerData = getData("all")
+    for (let player of PlayerData) {
+        if (player.id === id) {
+            return true
+        }
+    }
+    return false
+}
+
 export function FindIDByName(name) {
     const PlayerDatas = getData("all")
     for (let player of PlayerDatas) {
@@ -22,22 +32,37 @@ export function FindPlayerByName(name) {
 
 // health
 
-export function AddHealth(id, health_add) {
+export function AddHealthByID(id, healthAdd) {
     let player = getPlayerByID(id)
-    player.health = player.health + health_add
+    player.health = player.health + healthAdd
     updatePlayer(player)
 }
 
-export function RemoveHealth(id, health_remove) {
+export function RemoveHealthByID(id, healthRemove) {
     let player = getPlayerByID(id)
-    player.health = player.health - health_remove
+    player.health = player.health - healthRemove
     updatePlayer(player)
+}
+
+export function AddHealth(playerStat, healthAdd) {
+    playerStat.health = playerStat.health + healthAdd
+    updatePlayer(playerStat)
+}
+
+export function RemoveHealth(playerStat, healthRemove) {
+    playerStat.health = playerStat.health - healthRemove
+    updatePlayer(playerStat)
 }
 
 export function SetHealth(id, newHealth) {
     let player = getPlayerByID(id)
     player.health = newHealth
     updatePlayer(player)
+}
+
+export function IsAlive(id) {
+    let player = getPlayerByID(id)
+    return (player.health > 0)
 }
 
 // frozen states
@@ -49,7 +74,7 @@ export function IsFrozenByID(id) {
 
 export function IsFrozen(playerStat) {
     var lastGNT = playerStat.lastGNT
-    var twentyMinutesLater = new Date(lastGNT + (20 * 60 * 1000))
+    var twentyMinutesLater = lastGNT + (20 * 60 * 1000)
     return twentyMinutesLater < new Date().getTime()
 }
 
@@ -61,7 +86,7 @@ export function Freeze(id) {
 
 export function Unfreeze(id) {
     let player = getPlayerByID(id)
-    player.lastGNT = Date.now()
+    player.lastGNT = new Date().getTime()
     updatePlayer(player)
 }
 

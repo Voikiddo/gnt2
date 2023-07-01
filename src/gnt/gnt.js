@@ -1,6 +1,6 @@
 import { resetDB, getPlayerByID, getGameState, updatePlayer, updateGameState, RegisterNewPlayer, getData } from "./data.js"
 import { IsFrozen } from "./util.js"
-import { strikethrough } from "discord.js"
+import { strikethrough, bold } from "discord.js"
 
 // reset whole game
 export function ResetGame(playerData=undefined) {
@@ -88,8 +88,15 @@ export function PrintGameStatus() {
     const PlayerData = getData("alive")
     const FrozenThreshold = (new Date()).getTime() - (20 * 60 * 1000)
 
-    let output = ""
+    let output = "Game status:"
+    let currentTeam = ""
     for (let player in PlayerData) {
+        // if team changed then display team
+        if (currentTeam !== player.team) {
+            currentTeam = player.team
+            output = output + "\n" + bold(currentTeam) + "\n"
+        }
+
         const line = `${player.nickname} ${player.health}`
         if (player.lastGNT > FrozenThreshold) output = output + line + "\n"
         else output = output + strikethrough(line) + "\n"

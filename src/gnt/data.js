@@ -1,17 +1,17 @@
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { Low } from 'lowdb'
-import { JSONFile } from 'lowdb/node'
+import { LowSync } from 'lowdb'
+import { JSONFileSync } from 'lowdb/node'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const file = join(__dirname, 'db.json')
 
-const adapter = new JSONFile(file)
+const adapter = new JSONFileSync(file)
 const defaultData = { PlayerData: [],  Teams: [], GameState: { "AllowEntry": true, "SuddenDeath": false }}
-const db = new Low(adapter, defaultData)
+const db = new LowSync(adapter, defaultData)
 
-await db.read()
+db.read()
 
 export function resetDB(data = undefined) {
     if (data) db.data = data
@@ -31,31 +31,29 @@ export function getGameState() {
     return db.data.GameState
 }
 
-export function updatePlayers(newPlayerData) {
+export function updatePlayers(...newPlayerData) {
     db.read()
-
+    const {Teams} = db.data
     let teamChanged = false
-    let playerUpdateCount = 0
 
-    db.data.PlayerData = db.data.PlayerData.map(oldPlayerData => {
+    db.data.PlayerData = db.data.PlayerData.map(oldPlayer => {
         for (let newPlayer of newPlayerData) {
-            if (oldPlayerData.id === newPlayer.id) {
-                teamChanged = oldPlayerData.team === newPlayerData.team
-                playerUpdated = true
-                return newPlayerData
+            if (oldPlayer.id === newPlayer.id) {
+                teamChanged = oldPlayer.team === newPlayer.team
+                if (!Teams.includes(newPlayer.team)) Teams.push(newPlayer.team)
+
+                newPlayerData = newPlayerData.filter(p=>p.id!==newPlayer.id)
+                return newPlayer
             }
         }
-        return oldPlayerData
+        return oldPlayer
     })
 
-    if (playerUpdateCount !== newPlayerData.length) {
+    if (newPlayerData.length !== 0) {
         throw new Error("Can't find the player to update!")
     }
 
     if (teamChanged) {
-        const { Teams } = db.data
-        if (!Teams.includes(newPlayerData.team)) Teams.push(newPlayerData.team) // TODO
-        
         db.data.PlayerData.sort((a, b) => {
             const aIndex = Teams.findIndex(t => t===a.team)
             const bIndex = Teams.findIndex(t => t===b.team)
@@ -76,7 +74,7 @@ export function updatePlayer(newPlayerData) {
     db.data.PlayerData = db.data.PlayerData.map(oldPlayerData => {
         if (oldPlayerData.id === newPlayerData.id) {
             teamChanged = oldPlayerData.team === newPlayerData.team
-            if (!Teams.includes(newPlayer.team)) Teams.push(newPlayerData.team)
+            if (!Teams.includes(newPlayerData.team)) Teams.push(newPlayerData.team)
 
             playerUpdated = true
             return newPlayerData

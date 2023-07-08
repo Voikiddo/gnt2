@@ -2,7 +2,7 @@ import * as GNT from "../../gnt/gnt.js";
 import * as Utils from "../../gnt/util.js";
 
 export function run(message, commander) {
-    const CommanderID = commander.id
+    const CommanderID = parseInt(commander.id)
     const CommanderName = commander.displayName.split(' ')[0]
 
     switch(message[0]) {
@@ -29,7 +29,7 @@ export function run(message, commander) {
 }
 
 function HandleGNT(message, commander) {
-    const CommanderID = commander.id
+    const CommanderID = parseInt(commander.id)
     const CommanderName = commander.displayName.split(' ')[0]
     switch(message.length) {
         case 1:
@@ -38,7 +38,7 @@ function HandleGNT(message, commander) {
                 return ReturnObject(true, "You are now in the game!")
             }
 
-            if (Utils.IsFrozen(CommanderID)) {
+            if (Utils.IsFrozenByID(CommanderID)) {
                 Utils.Unfreeze(CommanderID)
                 return ReturnObject(true, "Welcome back to the game!")
             }

@@ -1,4 +1,4 @@
-import { resetDB, getPlayerByID, getGameState, updatePlayer, updateGameState, RegisterNewPlayer, getData } from "./data.js"
+import { resetDB, getPlayerByID, getGameState, updatePlayers, updatePlayer, updateGameState, RegisterNewPlayer, getData } from "./data.js"
 import { IsFrozen, Unfreeze } from "./util.js"
 import { strikethrough, bold } from "discord.js"
 
@@ -40,11 +40,17 @@ export function GNT(attackerID, ID1, ID2) {
         if (IsFrozen(player1)) throw new Error("Teammate frozen")
         if (IsFrozen(player2)) throw new Error("Attacked player frozen")
 
-        if (!State.SuddenDeath) player1.health++
-        player2.health--
+        if (!State.SuddenDeath) player1.health += 1
+        player2.health -= 1
 
-        updatePlayer(player1)
-        updatePlayer(player2)
+        if (player1.id === attacker.id) {
+            player1.lastGNT = new Date().getTime()
+            updatePlayers(player1, player2)
+        }
+        else {
+            attacker.lastGNT = new Date().getTime()
+            updatePlayers(player1, player2, attacker)
+        }
 
         if (player2.health === 0) return true
         else return false
@@ -62,8 +68,14 @@ export function GNT(attackerID, ID1, ID2) {
         player1.health--
         if (!State.SuddenDeath) player2.health++
 
-        updatePlayer(player1)
-        updatePlayer(player2)
+        if (player2.id === attacker.id) {
+            player2.lastGNT = new Date().getTime()
+            updatePlayers(player1, player2)
+        }
+        else {
+            attacker.lastGNT = new Date().getTime()
+            updatePlayers(player1, player2, attacker)
+        }
 
         if (player1.health === 0) return true
         else return false

@@ -33,9 +33,9 @@ export function run(message) {
             GNT.SuddenDeath()
             return true
         case "add":
-            if (!message[1] || !message[2]) return false
-            if (!message[3]) return GNT.AddPlayer(message[1], message[2])
-            else return GNT.AddPlayer(message[1], message[2], message[3])
+            if (!message[1] || !message[2] || !parseInt(message[2])) return false
+            if (!message[3]) return GNT.AddPlayer(message[1], parseInt(message[2]))
+            else return GNT.AddPlayer(message[1], parseInt(message[2]), message[3])
         case "freeze":
             if (!message[1]) return false
             player = Utils.FindIDByName(message[1])

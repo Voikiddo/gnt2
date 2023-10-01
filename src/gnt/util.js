@@ -118,13 +118,13 @@ export function SetScore(id, newScore) {
 // misc
 
 export function CloseEntry() {
-    let state = getGameState
+    let state = getGameState()
     state.AllowEntry = false
     updateGameState(state)
 }
 
 export function OpenEntry() {
-    let state = getGameState
+    let state = getGameState()
     state.AllowEntry = true
     updateGameState(state)
 }

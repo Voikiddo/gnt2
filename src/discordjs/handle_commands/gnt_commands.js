@@ -31,16 +31,17 @@ export function run(message, commander) {
 function HandleGNT(message, commander) {
     const CommanderID = parseInt(commander.id)
     const CommanderName = commander.displayName.split(' ')[0]
+
+    if (Utils.IsFrozenByID(CommanderID)) {
+        Utils.Unfreeze(CommanderID)
+        return ReturnObject(true, "Welcome back to the game! Please wait before you can gnt again :)")
+    }
+
     switch(message.length) {
         case 1:
             if (!Utils.HasPlayer(CommanderID)) {
                 GNT.AddPlayer(CommanderName, CommanderID)
                 return ReturnObject(true, "You are now in the game!")
-            }
-
-            if (Utils.IsFrozenByID(CommanderID)) {
-                Utils.Unfreeze(CommanderID)
-                return ReturnObject(true, "Welcome back to the game!")
             }
 
             return ReturnObject(false, "Type ?GNT [enemy] [teammate] or other way around to do give-and-take!")
@@ -72,9 +73,8 @@ function HandleGNT(message, commander) {
                 const killed = GNT.GNT(CommanderID, player1ID, player2ID)
                 if (!killed) return ReturnObject(true, `${CommanderName} took one heart from an enemy and gave it to their teammate!`)
                 
-                // someone is killed don't know who
-                if (Utils.IsAlive(player1ID)) return ReturnObject(true, `${CommanderName} killed ${message[1]}!`)
-                else return ReturnObject(true, `${CommanderName} killed ${message[2]}!`)
+                // taken is dead
+                return ReturnObject(true, `${CommanderName} killed ${message[2]} and gave the corpse to ${message[1]}!`)
             }
             catch (err) {
                 return ReturnObject(false, err.message)

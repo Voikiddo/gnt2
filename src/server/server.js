@@ -4,7 +4,7 @@ import path from 'path';
 import { log } from 'node:console';
 import { getData } from "../gnt/data.js";
 const app = express();
-const port = 8080;
+const port = 8000;
 
 export function StartServer() {
     app.get("/", function (req, res) {

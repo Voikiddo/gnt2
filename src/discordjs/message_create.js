@@ -25,7 +25,7 @@ export async function OnMessageCreate(message, client) {
 
     // admin commands
     if (CommandSymbol === ADMIN_SYMBOL && message.member.roles.cache.some(e=>e.id==='1104334111633584128')) {
-        return AdminCommands.run(CommandMessage)
+        if (AdminCommands.run(CommandMessage)) return true
     }
 
     // global commands
@@ -35,7 +35,7 @@ export async function OnMessageCreate(message, client) {
     if (commandOutcome.success) {
         const replyMessage = commandOutcome.message + "\n" + PrintGameStatus()
         message.reply(replyMessage).catch((error)=>{
-            console.log(`Something went wrong replying message`)
+            console.log(`Something went wrong replying message. Response: ${commandOutcome.message}`)
         })
         return true
     }

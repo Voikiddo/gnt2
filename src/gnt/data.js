@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 
 import { LowSync } from 'lowdb'
 import { JSONFileSync } from 'lowdb/node'
+import { log } from 'node:console'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const file = join(__dirname, 'db.json')
@@ -29,6 +30,10 @@ export function getPlayerByID(id) {
 export function getGameState() {
     db.read()
     return db.data.GameState
+}
+
+export function writeDB() {
+    db.write()
 }
 
 export function updatePlayers(...newPlayerData) {
@@ -109,6 +114,12 @@ export function updateGameState(newState) {
 export function updateData(newData) {
     db.data = newData
     db.write()
+}
+
+export function getPlayers() {
+    db.read()
+    const { PlayerData } = db.data
+    return PlayerData
 }
 
 // query = "all" | "alive" | "dead" | id
